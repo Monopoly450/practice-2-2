@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Каталог книг</title>
+  <script type="module" crossorigin src="/practice-2-2/assets/index-CAJMMOr0.js"></script>
+  <link rel="stylesheet" crossorigin href="/practice-2-2/assets/index-BXSwp5Ri.css">
+</head>
+<body>
+  <h1>Каталог книг</h1>
+  
+  <!-- Форма добавления -->
+  <form id="bookForm">
+    <input name="title" placeholder="Название" required>
+    <input name="authors" placeholder="Авторы (через запятую)" required>
+    <input name="year" type="number" placeholder="Год">
+    <input name="rating" type="number" placeholder="Рейтинг">
+    <button type="submit">Добавить</button>
+  </form>
+  <div id="errorMessage"></div>
+  <!-- Фильтры -->
+  <div id="filters">
+    <input id="filterAuthor" placeholder="Фильтр по автору">
+    <input id="filterYear" type="number" placeholder="Минимальный год">
+    <button id="applyFilters">Применить</button>
+  </div>
+  <div class="filters">
+    <input id="searchInput" placeholder="Поиск по названию...">
+    <select id="sortBy">
+      <option value="year">По году (новые)</option>
+      <option value="rating">По рейтингу</option>
+    </select>
+  </div>
+  <!-- Список книг -->
+  <div id="bookList"></div>
+  
+</body>
+</html>
