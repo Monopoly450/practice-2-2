@@ -1,7 +1,7 @@
 // Задание 4: Интеграция с DOM (Парсинг сырых данных)
 // Преобразование данных из HTML-формы в строго типизированный объект
 
-import { Book } from "./task1-types";
+import type { Book } from "./task1-types";
 
 /**
  * Создаёт объект Book из данных HTML-формы.
@@ -10,52 +10,55 @@ import { Book } from "./task1-types";
  * Ваша задача — преобразовать их в правильные типы и проверить границы значений.
  */
 export function createBookFromForm(formData: FormData): Book {
+  // TODO 1: Получите сырые значения полей формы через formData.get(...).
+  // Поля: title, authors, year, rating. Учитывайте, что get() может вернуть File или null.
+  const getString = (name: string): string => {
+    const value = formData.get(name);
+    return typeof value === "string" ? value.trim() : "";
+  };
 
-  // TODO 1: Получите сырые значения полей формы
-  // Используйте formData.get("fieldName") as string
-  // Поля: title, authors, year, rating
-  const titleRaw = formData.get("title") as string;
-  const authorsRaw = formData.get("authors") as string;
-  const yearRaw = formData.get("year") as string;
-  const ratingRaw = formData.get("rating") as string;
+  const title = getString("title");
+  const authorsRaw = getString("authors");
+  const yearRaw = getString("year");
+  const ratingRaw = getString("rating");
 
-  // TODO 2: Обработайте авторов
-  // Разбейте строку по запятой, уберите лишние пробелы (trim), 
-  // отфильтруйте пустые строки. Результат должен быть массивом string[].
+  if (!title) throw new Error("Укажите название книги");
+
+  // TODO 2: Разбейте авторов по запятой, удалите пробелы и пустые значения.
   const authors = authorsRaw
     .split(",")
     .map((author) => author.trim())
-    .filter((author) => author.length > 0)
+    .filter((author) => author.length > 0);
 
-  // TODO 3: Преобразуйте год
-  // Если поле года заполнено, преобразуйте строку в число через parseInt(str, 10).
-  // Если поле пустое, значение должно остаться undefined.
-  const year = yearRaw ? parseInt(yearRaw, 10) : undefined;
-  
-  // TODO 4: Преобразуйте и ВАЛИДИРУЕМ рейтинг
-  // Если поле рейтинга заполнено, преобразуйте строку в число через parseFloat.
-  // Проверьте: если полученное число меньше 0 или больше 5, 
-  // выбросьте ошибку: throw new Error("Рейтинг должен быть числом от 0 до 5");
-  // Если поле пустое, значение должно остаться undefined.
-  let rating: number | undefined = undefined;
-  
+  if (authors.length === 0) {
+    throw new Error("Укажите хотя бы одного автора");
+  }
+
+  // TODO 3: Преобразуйте заполненный год в целое число; пустое поле оставьте undefined.
+  let year: number | undefined;
+  if (yearRaw) {
+    year = Number(yearRaw);
+    if (!Number.isInteger(year) || year < 1) {
+      throw new Error("Год должен быть положительным целым числом");
+    }
+  }
+
+  // TODO 4: Преобразуйте рейтинг и проверьте, что это число от 0 до 5.
+  let rating: number | undefined;
   if (ratingRaw) {
-    rating = parseFloat(ratingRaw);
-    
-    // Бизнес-правило: рейтинг строго от 0 до 5
-    if (rating < 0 || rating > 5) {
+    rating = Number(ratingRaw);
+    if (!Number.isFinite(rating) || rating < 0 || rating > 5) {
       throw new Error("Рейтинг должен быть числом от 0 до 5");
     }
   }
-  // TODO 5: Сгенерируйте уникальный ID
-  // Используйте встроенную функцию crypto.randomUUID()
 
-  // TODO 6: Верните итоговый объект Book
-return {
-    id: crypto.randomUUID(), // Генерируем уникальный строковый идентификатор
-    title: titleRaw,
-    authors: authors,
-    year: year,
-    rating: rating,
+  // TODO 5: Сгенерируйте уникальный id с помощью crypto.randomUUID().
+  // TODO 6: Верните итоговый объект Book.
+  return {
+    id: crypto.randomUUID(),
+    title,
+    authors,
+    year,
+    rating,
   };
 }
